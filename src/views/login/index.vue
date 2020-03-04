@@ -97,7 +97,7 @@ export default {
         }).then(result => {
           // 成功之后打印结果
           // 把令牌放起来  把token存于本地缓存上
-          window.localStorage.setItem('user-token', result.data.data.token)
+          window.localStorage.setItem('user-token', result.data.token)
           // 编程式导航
           this.$router.push('/home')// 登陆成功--->home页
         }).catch(() => {
