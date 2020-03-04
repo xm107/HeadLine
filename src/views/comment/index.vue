@@ -63,6 +63,32 @@ export default {
       // index 代表当前索引
       // 改函数需要返回一个值 用来显示
       return cellValue ? '正常' : '关闭'
+    },
+    // 实现打开或者关闭的逻辑
+    openOrClose (row) {
+      const mess = row.comment_status ? '关闭' : '打开'
+      // $confirm 也支持promise 点击确认后会进入到then点击取消进入到catch
+      this.$confirm(`是否确认${mess}评论`, '提示').then(() => {
+        // 调用打开或者关闭接口
+        this.$axios({
+          url: '/comment/status', // 请求地址
+          method: 'put', // 请求类型
+          // query
+          params: {
+            article_id: row.id// 要求参数的文章
+          },
+          data: {
+            // body参数
+            allow_comment: !row.comment_status// 是打开还是关闭 此状态和评论状态相反
+          }
+        }).then(() => {
+          // 成功    提示消息  获取信息
+          this.$message.success(`${mess}评论成功`)
+          this.getComment()// 调用重新拉取数据的方法
+        }).catch(() => {
+          this.$message.error(`${mess}评论失败`)
+        })
+      })
     }
   },
   created () {
