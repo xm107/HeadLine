@@ -12,11 +12,15 @@
     <el-table :data="list">
       <!-- 使用el-table-c0lumn作为列 -->
       <!-- prop表示显示的字段 -->
-      <el-table-column width="600px" prop="name" label="标题"></el-table-column>
-      <el-table-column  label="评论状态"></el-table-column>
-      <el-table-column label="总评论数"></el-table-column>
-      <el-table-column label="粉丝评论数"></el-table-column>
-      <el-table-column label="操作"></el-table-column>
+      <el-table-column width="600px" prop="title" label="标题"></el-table-column>
+     <!-- 给el-table-column一个formatter属性  -->
+      <el-table-column :formatter="formattererBool" prop="comment_status" label="评论状态"></el-table-column>
+      <el-table-column prop="total_comment_count" label="总评论数"></el-table-column>
+      <el-table-column prop="fans_comment_count" label="粉丝评论数"></el-table-column>
+      <el-table-column label="操作">
+        <el-button type="text" size="small">修改</el-button>
+        <el-button type="text"  size="small">关闭评论</el-button>
+      </el-table-column>
     </el-table>
   </el-card>
 </template>
@@ -28,6 +32,31 @@ export default {
       list: [
 
       ]
+    }
+  },
+  methods: {
+    // 获取评论数据
+    getComment () {
+      this.$axios({
+        url: '/articles', // 请求地址
+        params: {
+          response_type: 'comment'// 此参数用来控制获取数据类型
+        }
+        // query参数应该在哪传axios
+        // params 传get参数也就是query参数
+        // data 传body参数也就是请求体参数
+      }).then(result => {
+        // 将返回中的数组给list
+        this.list = result.data.results
+      })
+    },
+    formattererBool (row, column, cellValue, index) {
+      // row 代表当前的一行数据
+      // column 代表当前的列信息
+      // celValue 代表当前单元格的值
+      // index 代表当前索引
+      // 改函数需要返回一个值 用来显示
+      return cellValue ? '正常' : '关闭'
     }
   }
 }
