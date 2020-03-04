@@ -14,12 +14,18 @@
       <!-- prop表示显示的字段 -->
       <el-table-column width="600px" prop="title" label="标题"></el-table-column>
      <!-- 给el-table-column一个formatter属性  -->
-      <el-table-column :formatter="formattererBool" prop="comment_status" label="评论状态"></el-table-column>
+      <el-table-column :formatter="formatterBool" prop="comment_status" label="评论状态"></el-table-column>
       <el-table-column prop="total_comment_count" label="总评论数"></el-table-column>
       <el-table-column prop="fans_comment_count" label="粉丝评论数"></el-table-column>
       <el-table-column label="操作">
-        <el-button type="text" size="small">修改</el-button>
-        <el-button type="text"  size="small">关闭评论</el-button>
+        <!-- el-table-cloumn组件 在插槽中传出了row $index store column -->
+        <!-- 插槽->作用域插槽->子组件中的数据通过插槽传出 slot-scope接接收 -->
+        <template slot-scope="obj">
+          <el-button type="text" size="small">修改</el-button>
+          <!-- 文本内容要根据当前行里面的评论状态决定显示还是隐藏 -->
+          <el-button @click="openOrClose(obj.row)" type="text"  size="small">{{obj.row.comment_status?'关闭评论':'打开评论'}}</el-button>
+        </template>
+
       </el-table-column>
     </el-table>
   </el-card>
@@ -50,7 +56,7 @@ export default {
         this.list = result.data.results
       })
     },
-    formattererBool (row, column, cellValue, index) {
+    formatterBool (row, column, cellValue, index) {
       // row 代表当前的一行数据
       // column 代表当前的列信息
       // celValue 代表当前单元格的值
@@ -58,6 +64,10 @@ export default {
       // 改函数需要返回一个值 用来显示
       return cellValue ? '正常' : '关闭'
     }
+  },
+  created () {
+  // 在钩子函数中 直接获取数据
+    this.getComment()
   }
 }
 </script>
