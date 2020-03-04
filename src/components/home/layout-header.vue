@@ -54,6 +54,15 @@ export default {
         this.$router.push('/login') // 跳回登录页  编程式导航
       }
     }
+  },
+  created () {
+    //   获取用户的个人信息
+    this.$axios({
+      url: '/user/profile' // 请求地址
+    }).then(result => {
+      // 如果加载成功了 我们要将数据赋值给 userInfo
+      this.userInfo = result.data.data
+    })
   }
 }
 </script>
