@@ -1,6 +1,6 @@
 <template>
   <!-- el-card做主页面 -->
-  <el-card>
+  <el-card v-loading="loading">
       <!-- 放置面包屑组件 slot="header"表示面包屑作为具名插槽给card的header部分（还有一个body）-->
     <bread-crumb slot="header">
     <!-- slot="title"  表示评论管理给面包屑的插槽-->
@@ -58,7 +58,8 @@ export default {
       },
       list: [
 
-      ]
+      ],
+      loading: false// 控制loading遮罩层的显示或者隐藏
     }
   },
   methods: {
@@ -72,6 +73,7 @@ export default {
     },
     // 获取评论数据
     getComment () {
+      this.loading = true// 打开遮罩层
       this.$axios({
         url: '/articles', // 请求地址
         // 接口 如果不传分页的数据 默认查第一页的数据
@@ -88,6 +90,7 @@ export default {
         this.list = result.data.results
         // 在获取完数据后 将 总数赋值给total
         this.page.total = result.data.total_count// 将总数赋值
+        this.loading = false// 请求书之完毕后 关闭遮罩层
       })
     },
     formatterBool (row, column, cellValue, index) {
