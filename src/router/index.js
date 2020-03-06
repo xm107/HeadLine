@@ -24,6 +24,9 @@ const routes = [
         // path: '/home/comment', //评论列表地址
         path: 'comment', // 简写
         component: () => import('@/views/comment') // 组件按需加载
+      }, {
+        path: 'material',
+        component: () => import('@/views/material')
       }
     ]
     // 在一级路由表下 children配置二级路由表
