@@ -27,7 +27,7 @@ el-submenu  折叠菜单
         </template>
             <!-- 匿名插槽是二级菜单 二级菜单还用el-menu-item -->
         <el-menu-item index="/home/publish">发布文章</el-menu-item>
-        <el-menu-item index="/home/article">内容列表</el-menu-item>
+        <el-menu-item index="/home/articles">内容列表</el-menu-item>
         <el-menu-item index="/home/comment">评论列表</el-menu-item>
         <el-menu-item index="/home/material">素材管理</el-menu-item>
     </el-submenu>
