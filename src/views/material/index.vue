@@ -25,9 +25,9 @@
                 <!-- 全部收藏的数据 -->
                 <div class="img-list" >
                     <!-- 采用v-for对list进行循环 -->
-                    <el-card class="img-card" v-for="item in list" :key="item.id">
+                    <el-card class="img-card" v-for="(item,index) in list" :key="item.id">
                         <!-- 放置图片 并且赋值 图片地址-->
-                        <img :src="item.url" alt="">
+                        <img :src="item.url" alt="" @click="selectImg(index)">
                         <!-- 操作栏 可以flex布局  -->
                         <el-row class="operate" type="flex" align="middle" justify="space-around">
                            <!-- 两个图标注册点击事件  根据数据判断图标颜色-->
@@ -37,13 +37,14 @@
                     </el-card>
                 </div>
             </el-tab-pane>
+
             <el-tab-pane label="收藏素材" name="collect">
                 <!-- 收藏素材的数据 -->
                 <div class="img-list">
                     <!-- 采用v-for对list数据进行循环 -->
-                    <el-card class="img-card" v-for="item in list" :key="item.id">
+                    <el-card class="img-card" v-for="(item,index) in list" :key="item.id">
                         <!-- 放置图片 并且赋值 图片地址 -->
-                        <img :src="item.url" alt="">
+                        <img :src="item.url" alt="" @click="selectImg(index)">
                                                 <!-- 操作栏 可以flex布局  -->
                         <el-row class="operate" type="flex" align="middle" justify="space-around">
                            <!-- 两个图标注册点击事件  根据数据判断图标颜色-->
@@ -69,10 +70,20 @@
            :page-size="page.pageSize"
            layout="prev,pager,next"
            @current-change="changePage"
-           >
-           </el-pagination>
-
+           ></el-pagination>
         </el-row>
+
+        <!-- 放置一个el-dialog组件 通过visible 属性进行true false设置  @事件名='简单的逻辑' -->
+        <el-dialog @opened="openEnd" :visible="dialogVisible" @close='dialogVisible=false'>
+          <!-- 放置一个走马灯组件 -->
+          <el-carousel ref="myCarousel" indicator-position="outside" height="400px">
+            <!-- 放置幻灯片的循环项目  根据当前页的list虚幻-->
+            <el-carousel-item v-for="item in list" :key="item.id">
+              <!-- 放置图片 -->
+              <img style="width:100%;height:100%" :src="item.url" alt="">
+            </el-carousel-item>
+          </el-carousel>
+        </el-dialog>
     </el-card>
 </template>
 
@@ -87,11 +98,25 @@ export default {
       page: {
         currentPage: 1, // 默认第一页
         total: 0, // 当前总数
-        pageSize: 4// 每页条数
-      }
+        pageSize: 10// 每页条数
+      },
+      dialogVisible: false, // 控制显示隐藏
+      clickIndex: -1 // 点击的索引
+
     }
   },
   methods: {
+    // 这个时候已经打开结束 ref已经有值 可以通过ref进行设置了
+    openEnd () {
+      this.$refs.myCarousel.setActiveItem(this.clickIndex)// 尝试通过这种方式index
+      /* ref属于懒加载，首次执行前不加载，当执行后进行加载 */
+    },
+    // 预览功能：点击图片调用
+    selectImg (index) {
+      this.clickIndex = index// 赋值
+      this.dialogVisible = true// 打开索引
+    },
+
     // 定义收藏或者取消素材
     collectOrCancel (row) {
       // 调用收藏/取消的接口
