@@ -28,10 +28,11 @@
                     <el-card class="img-card" v-for="item in list" :key="item.id">
                         <!-- 放置图片 并且赋值 图片地址-->
                         <img :src="item.url" alt="">
-                        <!-- 操作栏 可以flex布局 -->
+                        <!-- 操作栏 可以flex布局  -->
                         <el-row class="operate" type="flex" align="middle" justify="space-around">
-                            <i class="el-icon-star-on"></i>
-                            <i class="el-icon-delete-solid"></i>
+                           <!-- 两个图标注册点击事件  根据数据判断图标颜色-->
+                            <i @click="collectOrCancel(item)" :style="{color:item.is_collected ?'red':'black'}" class="el-icon-star-on"></i>
+                            <i @click="delMaterial(item)" class="el-icon-delete-solid"></i>
                         </el-row>
                     </el-card>
                 </div>
@@ -43,6 +44,12 @@
                     <el-card class="img-card" v-for="item in list" :key="item.id">
                         <!-- 放置图片 并且赋值 图片地址 -->
                         <img :src="item.url" alt="">
+                                                <!-- 操作栏 可以flex布局  -->
+                        <el-row class="operate" type="flex" align="middle" justify="space-around">
+                           <!-- 两个图标注册点击事件  根据数据判断图标颜色-->
+                            <i @click="collectOrCancel(item)" :style="{color:item.is_collected ?'red':'black'}" class="el-icon-star-on"></i>
+                            <i @click="delMaterial(item)" class="el-icon-delete-solid"></i>
+                        </el-row>
                     </el-card>
                 </div>
             </el-tab-pane>
@@ -85,6 +92,43 @@ export default {
     }
   },
   methods: {
+    // 定义收藏或者取消素材
+    collectOrCancel (row) {
+      // 调用收藏/取消的接口
+      this.$axios({
+        method: 'put', // 请求地址
+        url: `/user/images/${row.id}`, // 请求地址
+        data: {
+          collect: !row.is_collected // true/false-->取反
+        }// body参数
+      }).then(() => {
+        // 成功
+        this.getMaterial()
+      }).catch(() => {
+        // 失败
+        this.$message.error('收藏失败')
+      })
+    },
+    // 定义一个删除素材方法
+    delMaterial (row) {
+      // 删除前提示是否删除
+      this.$confirm('是否确认删除？', '提示').then(() => {
+        // 确认删除-->调用接口
+        this.$axios({
+          method: 'delete', // 请求地址
+          url: `/user/images/${row.id}` // 请求地址
+        }).then(() => {
+        // 删除成功-->重新拉取数据/在前端删除(移动端进行场景演示)
+        // C端场景 如果拉取删除或者修改数据 不会重新拉取数据 只会在前端修改对应的一条数据
+        // B端场景 可以拉取数据
+          this.getMaterial()
+        }).catch(() => {
+        // 失败
+          this.$message.error('删除失败')
+        })
+      })
+    },
+
     //   定义一个上传组件的方法
     uploadImg (params) {
       // params.file就是需要上传的图片文件
