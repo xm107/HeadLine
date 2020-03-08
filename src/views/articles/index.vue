@@ -10,6 +10,8 @@
     <el-form style="padding-left:50px">
       <el-form-item label="文章状态:">
         <!-- 放置单选框组 -->
+        <!-- 监听data中数据变化方法一监听每个组件 @change="changeCondition"-->
+        <!-- <el-radio-group v-model="searchForm.status" @change="changeCondition"> -->
         <el-radio-group v-model="searchForm.status">
           <!-- 单选框选项  label值表示该选项对应的值-->
           <!-- :label的意思是后面值不会加引号 -->
@@ -23,6 +25,8 @@
       </el-form-item>
       <el-form-item label="频道类型:">
         <!-- 选择器 -->
+        <!-- 监听data中数据变化方法一监听每个组件 @change="changeCondition"-->
+        <!-- <el-select @change="changeCondition" placeholder="请选择频道" v-model="searchForm.channel_id"> -->
         <el-select placeholder="请选择频道" v-model="searchForm.channel_id">
           <!-- 下拉选项 应该通过接口来获取数据 -->
           <!-- el-option是下拉的选项 label是显示值  value是绑定的值 -->
@@ -31,7 +35,10 @@
       </el-form-item>
       <el-form-item label="日期范围:">
         <!-- 日期范围选择组件  要设置type属性为 daterange-->
-        <el-date-picker type="daterange" v-model="searchForm.dateRange"></el-date-picker>
+        <!-- 显示值与结构不一致 value-format绑定值的格式-->
+        <!-- 监听data中数据变化方法一监听每个组件 @change="changeCondition"-->
+        <!-- <el-date-picker @change="changeCondition" type="daterange" value-format="yyyy-MM-dd" v-model="searchForm.dateRange"></el-date-picker> -->
+        <el-date-picker type="daterange" value-format="yyyy-MM-dd" v-model="searchForm.dateRange"></el-date-picker>
       </el-form-item>
     </el-form>
 
@@ -91,6 +98,15 @@ export default {
       defaultImg: require('../../assets/img/default.gif') // 地址对应的文件变成了变量 在编译的时候会被拷贝到对应位置
     }
   },
+  // 监听data中数据变化 第二种方案 watch监听对象的深度检测方案
+  watch: {
+    searchForm: {
+      deep: true, // 固定写法 表示 会深度检测searchForm中的数据变化
+      handler () { // handle也是固定写法 一旦数据发生任何变化 就会触发 更新
+        this.changeCondition()// this 指向当前组价实例
+      }
+    }
+  },
   // 专门处理显示格式的
   filters: {
     // 过滤器的第一个参数是value
@@ -123,6 +139,28 @@ export default {
     }
   },
   methods: {
+    // 组件条件
+    // 筛选方法一监听每个组件:改变条件
+    changeCondition () {
+      // 当触发此方法时，表单数据已经变成最新的了
+      // 组装条件
+      const params = {
+        // 文章状态，0-草稿，1-待审核，2-审核通过，3-审核失败，4-已删除，不传为全部 / 先将 5 定义成 全部
+        status: this.searchForm.status === 5 ? null : this.searchForm.status, // 5（自己虚构）->不传数据
+        channel_id: this.searchForm.channel_id, // 就是表单的数据
+        begin_pubdate: this.searchForm.dateRange.length ? this.searchForm.dateRange[0] : null,
+        end_pubdate: this.searchForm.dateRange.length > 1 ? this.searchForm.dateRange[1] : null
+      }
+      // 通过接口传入
+      /*       this.$axios({
+        url: '/articles',
+        params// 参数
+      }).then(result => {
+        this.list = result.data.results// 获取文章列表
+      }) */
+      this.getArticles(params)// 直接调用获取方法
+    },
+
     // 获取频道数据
     getChannels () {
       this.$axios({
@@ -133,9 +171,10 @@ export default {
       })
     },
     // 获取文章列表
-    getArticles () {
+    getArticles (params) {
       this.$axios({
-        url: '/articles' // 请求地址
+        url: '/articles', // 请求地址
+        params
       }).then(result => {
         this.list = result.data.results // 获取文章列表
       })
