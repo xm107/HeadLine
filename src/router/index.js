@@ -31,7 +31,7 @@ const routes = [
         path: 'articles',
         component: () => import('@/views/articles')
       }, {
-        path: 'publish', // 发布文章
+        path: 'publish/:articleId?', // 发布文章 加上问号 可有可无
         component: () => import('@/views/publish')
       }
     ]
