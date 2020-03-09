@@ -78,12 +78,29 @@
         </span>
       </div>
     </div>
+    <!-- 放置分页组件 -->
+    <el-row type="flex" justify="center" style="height:80px" align="middle">
+      <!-- 分页组件 -->
+      <el-pagination :current-page="page.currentPage"
+      :page-size="page.pageSize"
+      :total="page.total"
+      @current-change="changePage"
+      background layout="prev,pager,next">
+      </el-pagination>
+    </el-row>
   </el-card>
 </template>
 <script>
 export default {
   data () {
     return {
+      // 分页
+      page: {
+        currentPage: 1, // 当前页码
+        pageSize: 10, // 接口要求每页10-50条之间
+        total: 0
+      },
+
       // 定义一个表单数据对象
       searchForm: {
         // 数据
@@ -103,6 +120,7 @@ export default {
     searchForm: {
       deep: true, // 固定写法 表示 会深度检测searchForm中的数据变化
       handler () { // handle也是固定写法 一旦数据发生任何变化 就会触发 更新
+        this.page.currentPage = 1// 只要条件改变，页面变为1
         this.changeCondition()// this 指向当前组价实例
       }
     }
@@ -139,17 +157,26 @@ export default {
     }
   },
   methods: {
+    // 改变页码事件
+    changePage (newPage) {
+      // 先将最新页码给当前页
+      this.page.currentPage = newPage
+      this.changeCondition()// 直接调用
+    },
+
     // 组件条件
     // 筛选方法一监听每个组件:改变条件
     changeCondition () {
       // 当触发此方法时，表单数据已经变成最新的了
       // 组装条件
       const params = {
+        page: this.page.currentPage, // 如果条件改变，回到第一页
+        per_page: this.page.pageSize,
         // 文章状态，0-草稿，1-待审核，2-审核通过，3-审核失败，4-已删除，不传为全部 / 先将 5 定义成 全部
         status: this.searchForm.status === 5 ? null : this.searchForm.status, // 5（自己虚构）->不传数据
         channel_id: this.searchForm.channel_id, // 就是表单的数据
-        begin_pubdate: this.searchForm.dateRange.length ? this.searchForm.dateRange[0] : null,
-        end_pubdate: this.searchForm.dateRange.length > 1 ? this.searchForm.dateRange[1] : null
+        begin_pubdate: this.searchForm.dateRange && this.searchForm.dateRange.length ? this.searchForm.dateRange[0] : null,
+        end_pubdate: this.searchForm.dateRange && this.searchForm.dateRange.length > 1 ? this.searchForm.dateRange[1] : null
       }
       // 通过接口传入
       /*       this.$axios({
@@ -177,6 +204,8 @@ export default {
         params
       }).then(result => {
         this.list = result.data.results // 获取文章列表
+        // 将总数赋值给total
+        this.page.total = result.data.total_count
       })
     }
   },
