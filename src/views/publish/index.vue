@@ -71,6 +71,19 @@ export default {
     }
   },
   methods: {
+    // 改变类型事件
+    changeType () {
+      // 我们应该根据type的值对image进行控制
+      if (this.publishForm.cover.type === 1) {
+        // 单图模式
+        this.publishForm.cover.images = ['']// 此处为选择图片 -->空字符串
+      } else if (this.publishForm.cover.type === 3) {
+        this.publishForm.cover.images = ['', '', '']// 此处为选择图片 -->空字符串
+      } else {
+        this.publishForm.cover.images = []// 此处为选择图片 -->空字符串
+      }
+    },
+
     // 根据id获取文章详情数据
     getArticleById (id) {
       //  获取数据
