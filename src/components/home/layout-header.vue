@@ -7,7 +7,7 @@
         <!-- 图标 -->
         <i class='el-icon-magic-stick'></i>
         <span>
-           仙女集合地
+          仙女集合基地
        </span>
     </el-col>
     <!-- 右侧 -->

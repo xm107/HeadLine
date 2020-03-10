@@ -18,7 +18,8 @@
         <el-form-item label="封面" prop="cover" style="margin-top:120px;">
           <!-- 单选框组 -->
           <!-- 封面单选组 绑定的是 封面cover中的type -->
-          <el-radio-group v-model="publishForm.cover.type">
+          <!-- 当类型发生变化时触发changeType -->
+          <el-radio-group v-model="publishForm.cover.type" @change="changeType">
             <!-- 需要给每个el-radio 加上 label属性 -->
              <el-radio :label="1">单图</el-radio>
              <el-radio :label="3">三图</el-radio>
@@ -26,6 +27,10 @@
              <el-radio :label="-1">自动</el-radio>
           </el-radio-group>
         </el-form-item>
+
+        <!-- 放置封面组件 -->
+          <cover-image @selectTwoImg="receiveImg" :list="publishForm.cover.images"></cover-image>
+
         <el-form-item label="频道" prop="channel_id">
           <!-- select选择器 -->
           <el-select placeholder="请选择频道" v-model="publishForm.channel_id">
@@ -71,6 +76,17 @@ export default {
     }
   },
   methods: {
+    // 接收cover-image传递的数据
+    receiveImg (url, index) {
+      // 接收到传递过来的数据
+      // 接下来更新images数组
+      // 但是 只能拿到了一个url地址，但是images可能又一条或者三条 单单又地址并不能知道要更新给第几张
+      // ---->点击哪张然后选择图片 去设置这一张图片的地址--->点击图片时 可以记录索引
+      // 收到index  url可以改变数据了
+      this.publishForm.cover.images.splice(index, 1, url) // 删除替换元素
+      // splice(索引，删除的个数，替换的个数)
+    },
+
     // 改变类型事件
     changeType () {
       // 我们应该根据type的值对image进行控制
