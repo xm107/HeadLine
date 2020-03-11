@@ -7,11 +7,22 @@
          <img class="img" :src="item" alt="">
       </el-carousel-item>
 </el-carousel>
+<!-- 放置图标组件 -->
+<!-- ref -->
+<!-- <div ref="myChart" class="echarts">
+
+</div> -->
 </div>
 </template>
 
 <script>
+// import Echarts from 'echarts'
 export default {
+  // mounted () {
+  //   // 进行echarts图表实例化
+  //   this.myChart = Echarts.init(this.$refs.myChart)// 实例化 得到一个图表的实例化对象
+  // },
+
   data () {
     return {
       list: [

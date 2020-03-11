@@ -55,7 +55,7 @@ export default {
           { pattern: /^([a-zA-Z]|[0-9])(\w|-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/, message: '邮箱格式不正确', trigger: 'blur' }
         ]
       },
-      defaultImg: require('../../assets/img/header.jpg') // 头像变量
+      defaultImg: require('../../assets/img/xn3.jpg') // 头像变量
     }
   },
   methods: {
@@ -109,7 +109,7 @@ export default {
 }
 </script>
 
-<style>
+<style ang="less" scoped>
 .head-upload {
     position: absolute;
     right: 350px;
