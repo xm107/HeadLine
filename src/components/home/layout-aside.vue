@@ -8,11 +8,13 @@ el-submenu  折叠菜单
   <div class="layout-aside">
 <!-- 头部图片 -->
 <div class="title">
-    <img src="../../assets/img/logo_admin.png" alt="">
+          <!-- 如果img是动态的 你需要把地址转变成变量 -->
+         <!-- 如果是折叠 用小图 如果是展开 用大图 -->
+         <img :src="collapse ? smallImg : bigImg" alt="">
 </div>
 <!-- 左侧导航菜单  开启路由模式  (完整写法):router="true"简写----》router-->
 <!-- 需要给每一个菜单项配置  index属性 index属性在路由模式下回座位跳转路径 -->
-<el-menu router background-color="#2C6C98" text-color="#053B62">
+<el-menu :collapse="collapse" router background-color="#2C6C98" text-color="#053B62">
     <!-- 子菜单 没有子菜单用el-menu-item -->
     <el-menu-item index="/home">
         <i class="el-icon-s-home"></i>
@@ -52,7 +54,13 @@ el-submenu  折叠菜单
 
 <script>
 export default {
-
+  props: ['collapse'], // 接收父组件传出来的变量
+  data () {
+    return {
+      bigImg: require('../../assets/img/logo_admin.png'),
+      smallImg: require('../../assets/img/toutiao.png')
+    }
+  }
 }
 </script>
 
