@@ -33,6 +33,9 @@ const routes = [
       }, {
         path: 'publish/:articleId?', // 发布文章 加上问号 可有可无
         component: () => import('@/views/publish')
+      }, {
+        path: 'account',
+        component: () => import('@/views/account')// 账户组件
       }
     ]
     // 在一级路由表下 children配置二级路由表
